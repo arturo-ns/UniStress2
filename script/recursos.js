@@ -1,6 +1,6 @@
 import { supabase } from './utils.js';
 
-export async function cargarRecursosPsicoeducativos() {
+export async function recursosPsicoeducativos() {
   const { data: sessionData } = await supabase.auth.getSession();
   const userId = sessionData?.session?.user?.id;
   if (!userId) return;
