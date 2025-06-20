@@ -1,5 +1,5 @@
 import { cargarDatosUsuario,Termometro,iniciarTourIntroJS, manejarFotoPerfil, manejarEdicionPerfil, manejarCerrarSesion } from './usuario.js';
-import { manejarCambioSeccion } from './navigation.js';
+import { cambioSeccion } from './navigation.js';
 import { manejarFormularioTest } from './test.js';
 import { manejarRegistroEmocional, GraficoEmociones, mostrarRecomendaciones } from './emociones.js';
 import { cargarRecursosPsicoeducativos } from './recursos.js';
@@ -11,7 +11,7 @@ import { inicializarChatbot } from './chatbot.js';
 document.addEventListener('DOMContentLoaded', async () => {
   cargarDatosUsuario();
   Termometro();
-  manejarCambioSeccion();
+  cambioSeccion();
   manejarFotoPerfil();
   manejarEdicionPerfil();
   manejarCerrarSesion();
