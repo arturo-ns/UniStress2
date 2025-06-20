@@ -5,93 +5,75 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function inicializarConfiguracion() {
-  manejarModoOscuro();
-  manejarColorAcento();
-  manejarSelectorIdioma();
-  manejarNotificaciones();
-  manejarEliminarCuenta();
+  modoOscuro();
+  colorAcento();
+  selectorIdioma();
+  notificaciones();
+  eliminarCuenta();
 }
 
 /* ========== 1. Modo Claro/Oscuro ========== */
-function manejarModoOscuro() {
+function modoOscuro() {
   const toggle = document.getElementById('toggleModoOscuro');
-  const modoOscuro = localStorage.getItem('modoOscuro') === 'true';
+  if (!toggle) return;
 
-  document.body.classList.toggle('modo-oscuro', modoOscuro);
-  if (toggle) toggle.checked = modoOscuro;
-
-  toggle?.addEventListener('change', () => {
-    const activo = toggle.checked;
-    document.body.classList.toggle('modo-oscuro', activo);
-    localStorage.setItem('modoOscuro', activo);
+  toggle.addEventListener('change', () => {
+    document.body.classList.toggle('modo-oscuro', toggle.checked);
   });
 }
 
 /* ========== 2. Color de acento ========== */
-function manejarColorAcento() {
+function colorAcento() {
   const selector = document.getElementById('selectorColorAcento');
-  const colorGuardado = localStorage.getItem('colorAcento') || '#0d6efd';
-  document.documentElement.style.setProperty('--bs-primary', colorGuardado);
+  if (!selector) return;
 
-  if (selector) selector.value = colorGuardado;
-
-  selector?.addEventListener('change', () => {
-    const color = selector.value;
-    document.documentElement.style.setProperty('--bs-primary', color);
-    localStorage.setItem('colorAcento', color);
+  selector.addEventListener('change', () => {
+    document.documentElement.style.setProperty('--bs-primary', selector.value);
   });
 }
 
-/* ========== 3. Selector de idioma (básico) ========== */
-function manejarSelectorIdioma() {
+/* ========== 3. Idioma (visual temporal) ========== */
+function selectorIdioma() {
   const selector = document.getElementById('selectorIdioma');
-  const idioma = localStorage.getItem('idioma') || 'es';
+  if (!selector) return;
 
-  if (selector) selector.value = idioma;
-
-  selector?.addEventListener('change', () => {
-    const nuevoIdioma = selector.value;
-    localStorage.setItem('idioma', nuevoIdioma);
-    notificarUsuario('Idioma cambiado a: ' + (nuevoIdioma === 'es' ? 'Español' : 'English'));
+  selector.addEventListener('change', () => {
+    const idioma = selector.value;
+    notificarUsuario(`Idioma cambiado a: ${idioma === 'es' ? 'Español' : 'English'}`);
   });
 }
 
-/* ========== 4. Notificaciones simuladas ========== */
-function manejarNotificaciones() {
+/* ========== 4. Notificaciones ========== */
+function notificaciones() {
   const toggle = document.getElementById('toggleNotificaciones');
-  const notificaciones = localStorage.getItem('notificaciones') === 'true';
+  if (!toggle) return;
 
-  if (toggle) toggle.checked = notificaciones;
-
-  toggle?.addEventListener('change', () => {
-    const activo = toggle.checked;
-    localStorage.setItem('notificaciones', activo);
-    notificarUsuario(`Notificaciones ${activo ? 'activadas' : 'desactivadas'}`);
+  toggle.addEventListener('change', () => {
+    notificarUsuario(`Notificaciones ${toggle.checked ? 'activadas' : 'desactivadas'}`);
   });
 }
 
 /* ========== 5. Eliminar cuenta ========== */
-function manejarEliminarCuenta() {
+function eliminarCuenta() {
   const btnEliminar = document.getElementById('btnEliminarCuenta');
+  if (!btnEliminar) return;
 
-  btnEliminar?.addEventListener('click', () => {
-    mostrarModalEliminarCuenta();
+  btnEliminar.addEventListener('click', () => {
+    const modal = new bootstrap.Modal(document.getElementById('modalConfirmarEliminarCuenta'));
+    modal.show();
+
+    const confirmarBtn = document.getElementById('confirmarEliminarCuenta');
+    if (confirmarBtn) {
+      confirmarBtn.addEventListener(
+        'click',
+        () => {
+          notificarUsuario('Cuenta eliminada correctamente.');
+          modal.hide();
+          window.location.href = 'login.html';
+        },
+        { once: true }
+      );
+    }
   });
-}
-
-function mostrarModalEliminarCuenta() {
-  const modal = new bootstrap.Modal(document.getElementById('modalConfirmarEliminarCuenta'));
-  modal.show();
-
-  const confirmarBtn = document.getElementById('confirmarEliminarCuenta');
-
-  const confirmarHandler = () => {
-    localStorage.clear();
-    modal.hide();
-    notificarUsuario('Cuenta eliminada correctamente.');
-    window.location.href = 'login.html';
-  };
-
-  confirmarBtn.addEventListener('click', confirmarHandler, { once: true });
 }
 
