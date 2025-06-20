@@ -2,7 +2,7 @@ import { cargarDatosUsuario,Termometro,iniciarTourIntroJS, manejarFotoPerfil, ma
 import { cambioSeccion } from './navigation.js';
 import { formularioTest } from './test.js';
 import { manejarRegistroEmocional, GraficoEmociones, mostrarRecomendaciones } from './emociones.js';
-import { cargarRecursosPsicoeducativos } from './recursos.js';
+import { recursosPsicoeducativos } from './recursos.js';
 import { mostrarFraseMotivacional, mostrarDesafioDiario,renderizarMensajesAnonimos } from './comunidad.js';
 import { mostrarNotificaciones } from './notificacion.js';
 import {  } from './configuracion.js';
@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   manejarRegistroEmocional();
   GraficoEmociones();
   mostrarRecomendaciones();
-  cargarRecursosPsicoeducativos();
+  recursosPsicoeducativos();
   mostrarDesafioDiario();
   mostrarFraseMotivacional();
   renderizarMensajesAnonimos();
