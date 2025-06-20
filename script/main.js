@@ -1,6 +1,6 @@
 import { cargarDatosUsuario,Termometro,iniciarTourIntroJS, manejarFotoPerfil, manejarEdicionPerfil, manejarCerrarSesion } from './usuario.js';
 import { cambioSeccion } from './navigation.js';
-import { manejarFormularioTest } from './test.js';
+import { formularioTest } from './test.js';
 import { manejarRegistroEmocional, GraficoEmociones, mostrarRecomendaciones } from './emociones.js';
 import { cargarRecursosPsicoeducativos } from './recursos.js';
 import { mostrarFraseMotivacional, mostrarDesafioDiario,renderizarMensajesAnonimos } from './comunidad.js';
@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   manejarFotoPerfil();
   manejarEdicionPerfil();
   manejarCerrarSesion();
-  manejarFormularioTest();
+  formularioTest();
   manejarRegistroEmocional();
   GraficoEmociones();
   mostrarRecomendaciones();
