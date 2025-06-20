@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   renderizarMensajesAnonimos();
   mostrarNotificaciones();
   inicializarChatbot();
-
+  
   // 🔁 Verifica si debe mostrar el tutorial
   const { data: sessionData } = await supabase.auth.getSession();
   const userId = sessionData?.session?.user.id;
