@@ -1,12 +1,13 @@
 import { supabase } from './utils.js';
 import { notificarUsuario } from './notificacion.js';
-/* ========== Test psicológico ========== */
-export function manejarFormularioTest() {
-  const formTest = document.getElementById('formTest');
-  const resultadoDiv = document.getElementById('resultadoTest');
-  const preguntasContainer = document.getElementById('preguntasTest');
 
-  if (!formTest || !resultadoDiv || !preguntasContainer) return;
+/* ========== Test psicológico ========== */
+export function formularioTest() {
+  const form = document.getElementById('formTest');
+  const resultado = document.getElementById('resultadoTest');
+  const contenedorPreguntas = document.getElementById('preguntasTest');
+
+  if (!form || !resultado || !contenedorPreguntas) return;
 
   const preguntas = [
     "Me siento abrumado por la cantidad de tareas académicas.",
@@ -21,52 +22,28 @@ export function manejarFormularioTest() {
     "Me siento agotado(a) emocionalmente por la universidad."
   ];
 
-  // Generar preguntas dinámicamente
-  preguntas.forEach((texto, i) => {
-    const num = i + 1;
-    const grupo = document.createElement('div');
-    grupo.classList.add('mb-3');
+  generarPreguntas(contenedorPreguntas, preguntas);
 
-    let opciones = '';
-    for (let j = 1; j <= 5; j++) {
-      opciones += `
-        <div class="form-check form-check-inline">
-          <input class="form-check-input" type="radio" name="pregunta${num}" id="p${num}_${j}" value="${j}" required>
-          <label class="form-check-label" for="p${num}_${j}">${j}</label>
-        </div>
-      `;
-    }
-
-    grupo.innerHTML = `
-      <label class="form-label"><strong>${num}.</strong> ${texto}</label><br/>
-      ${opciones}
-    `;
-    preguntasContainer.appendChild(grupo);
-  });
-
-  // Evento al enviar
-  formTest.addEventListener('submit', async e => {
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
 
-    const respuestas = Array.from(formTest.querySelectorAll('input[type="radio"]:checked')).map(input => parseInt(input.value));
-    if (respuestas.length !== 10) {
+    const respuestas = obtenerRespuestas(form, preguntas.length);
+    if (!respuestas) {
       notificarUsuario('Por favor responde todas las preguntas.');
       return;
     }
 
     const puntaje = respuestas.reduce((acc, val) => acc + val, 0);
 
-    // Obtener usuario autenticado
-    const { data: sessionData, error: sessionError } = await supabase.auth.getUser();
-    if (sessionError || !sessionData.user) {
+    const { data: session, error: sessionError } = await supabase.auth.getUser();
+    if (sessionError || !session.user) {
       notificarUsuario('No estás autenticado. Inicia sesión.');
       return;
     }
 
-    // Insertar en tabla test
     const { error: insertError } = await supabase.from('test').insert([{
       puntaje,
-      fecha: new Date().toISOString() // o puedes dejarlo NULL si en DB lo manejas
+      fecha: new Date().toISOString()
     }]);
 
     if (insertError) {
@@ -75,18 +52,50 @@ export function manejarFormularioTest() {
       return;
     }
 
-    // ✅ Limpiar el formulario
-    formTest.reset();
-
-    resultadoDiv.innerHTML = `
-      <div class="alert alert-info mt-4" id="mensajeTest">
-        <h5 class="mb-2">Resultado del Test</h5>
-        <p>Puntaje total: <strong>${puntaje}</strong> de 50</p>
-      </div>
-    `;
-    setTimeout(() => {
-    const mensaje = document.getElementById('mensajeTest');
-    if (mensaje) mensaje.remove();
-    }, 4000); // Ocultar después de 4 segundos
+    form.reset();
+    mostrarResultado(resultado, puntaje);
   });
+}
+
+function generarPreguntas(contenedor, preguntas) {
+  preguntas.forEach((texto, index) => {
+    const num = index + 1;
+    const grupo = document.createElement('div');
+    grupo.classList.add('mb-3');
+
+    const opciones = Array.from({ length: 5 }, (_, i) => {
+      const valor = i + 1;
+      return `
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="pregunta${num}" id="p${num}_${valor}" value="${valor}" required>
+          <label class="form-check-label" for="p${num}_${valor}">${valor}</label>
+        </div>
+      `;
+    }).join('');
+
+    grupo.innerHTML = `
+      <label class="form-label"><strong>${num}.</strong> ${texto}</label><br/>
+      ${opciones}
+    `;
+    contenedor.appendChild(grupo);
+  });
+}
+
+function obtenerRespuestas(formulario, totalPreguntas) {
+  const seleccionadas = Array.from(formulario.querySelectorAll('input[type="radio"]:checked'));
+  if (seleccionadas.length !== totalPreguntas) return null;
+  return seleccionadas.map(input => parseInt(input.value));
+}
+
+function mostrarResultado(contenedor, puntaje) {
+  contenedor.innerHTML = `
+    <div class="alert alert-info mt-4" id="mensajeTest">
+      <h5 class="mb-2">Resultado del Test</h5>
+      <p>Puntaje total: <strong>${puntaje}</strong> de 50</p>
+    </div>
+  `;
+
+  setTimeout(() => {
+    document.getElementById('mensajeTest')?.remove();
+  }, 4000);
 }
