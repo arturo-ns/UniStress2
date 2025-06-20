@@ -1,7 +1,7 @@
-// Notificaciones simuladas
+/* ======================= Notificaciones Simuladas ==================== */
 const listaNotificaciones = document.getElementById("listaNotificaciones");
 
-// Datos de ejemplo
+// Datos temporales
 const notificacionesEjemplo = [
   "📌 Recuerda registrar tu emoción del día.",
   "🧠 Nuevo artículo disponible: Cómo reducir la ansiedad en época de exámenes.",
@@ -16,18 +16,21 @@ export function mostrarNotificaciones() {
   listaNotificaciones.innerHTML = "";
 
   if (notificacionesEjemplo.length === 0) {
-    listaNotificaciones.innerHTML = '<li class="list-group-item">No tienes nuevas notificaciones.</li>';
+    listaNotificaciones.innerHTML = `
+      <li class="list-group-item">No tienes nuevas notificaciones.</li>
+    `;
     return;
   }
 
-  notificacionesEjemplo.forEach(nota => {
-    const li = document.createElement("li");
-    li.classList.add("list-group-item", "custom-list-item");
-    li.textContent = nota;
-    listaNotificaciones.appendChild(li);
-  });
+  for (const mensaje of notificacionesEjemplo) {
+    const item = document.createElement("li");
+    item.className = "list-group-item custom-list-item";
+    item.textContent = mensaje;
+    listaNotificaciones.appendChild(item);
+  }
 }
 
+// =================== Toastify ===================
 export function notificarUsuario(mensaje, tipo = 'info') {
   const colores = {
     info: "#0d6efd",        // Azul informativo
@@ -41,7 +44,7 @@ export function notificarUsuario(mensaje, tipo = 'info') {
     duration: 3000,
     gravity: "top",
     position: "right",
-    backgroundColor: colores[tipo] || "#0d6efd",
+    backgroundColor: colores[tipo] || colores.info,
     close: true,
     stopOnFocus: true
   }).showToast();
